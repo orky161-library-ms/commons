@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+
+  initDb:
+    image: orky161/library-init:3
+    environment:
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - library-net
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 3s
+      retries: 5
+    volumes:
+      - mysql-db:/var/lib/mysql
+      - mysql-db:/var/mysql-dumps
+    networks:
+      - library-net
+
+
+  auth:
+    image: orky161/library-auth:3
+    restart: always
+    environment:
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+      - AUTH_SERVICE
+    ports:
+      - '30000:30000'
+    networks:
+      - library-net
+
+
+  employee:
+    image: orky161/library-employees:3
+    restart: always
+    environment:
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+      - AUTH_SERVICE
+    ports:
+      - '30004:30004'
+    extra_hosts:
+      - "auth:10.0.0.16"
+    networks:
+      - library-net
+
+
+  books:
+    image: orky161/library-books:3
+    restart: always
+    environment:
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+      - ACCESS_KEY_ID
+      - SECRET_ACCESS_KEY
+      - BUCKET
+      - AUTH_SERVICE
+    ports:
+      - '30001:30001'
+    networks:
+      - library-net
+
+  authors:
+    image: orky161/library-authors:3
+    restart: always
+    environment:
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+      - AUTH_SERVICE
+    ports:
+      - '30002:30002'
+    networks:
+      - library-net
+
+  clients:
+    image: orky161/library-clients:3
+    restart: always
+    environment:
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+      - AUTH_SERVICE
+    ports:
+      - '30003:30003'
+    networks:
+      - library-net
+
+
+volumes:
+  mysql-db:
+ 
+networks:
+  library-net:
+    driver: bridge
