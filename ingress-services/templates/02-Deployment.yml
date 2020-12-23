@@ -33,3 +33,28 @@ spec:
                   key: {{ $key | quote }}
             {{- end }}
             {{- end }}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "500Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.port }}
+            failureThreshold: 5
+            periodSeconds: 10
