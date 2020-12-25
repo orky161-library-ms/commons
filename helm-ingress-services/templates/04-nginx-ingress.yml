@@ -8,6 +8,13 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    nginx.ingress.kubernetes.io/auth-url: http://auth-service.default.svc.cluster.local:80/api/auth/verify
+    nginx.ingress.kubernetes.io/auth-snippet: |
+        {{- range $key := $.Values.externals }}
+        if ( $request_uri = "/{{ $.Values.name }}{{ $key }}") {
+             return 200;
+        }
+        {{- end }}
 spec:
   rules:
       - http:
