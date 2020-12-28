@@ -1,3 +1,4 @@
+{{ if not $.Values.private }}
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -31,3 +32,5 @@ spec:
                 serviceName: {{ .Values.name }}-service
                 servicePort: 80
               path: /{{ .Values.name }}(/|$)(.*)
+
+{{ end }}
