@@ -12,13 +12,13 @@ metadata:
     nginx.ingress.kubernetes.io/auth-url: http://{{ .Values.authService }}.{{ .Values.namespace }}.svc.cluster.local:80/api/auth/verify
     nginx.ingress.kubernetes.io/auth-snippet: |
         {{- range $paths := $.Values.public }}
-        if ($request_uri ~ ^/{{ $.Values.name }}{{ $paths.path }}) {
-            set $req  {{ $paths.path }};
+        if ($request_uri {{ default "= " $paths.prefix }}/{{ $.Values.name }}{{ $paths.path }}) {
+            set $req  {{ $paths.id }};
         }
         if ($request_method = {{ $paths.method }}) {
-            set $req  "${req}{{ $paths.path }}";
+            set $req  "${req}{{ $paths.id }}";
         }
-        if ($req = {{ $paths.path }}{{ $paths.path }}) {
+        if ($req = {{ $paths.id }}{{ $paths.id }}) {
             return 200;
         }
         {{- end }}
