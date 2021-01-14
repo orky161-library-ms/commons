@@ -15,19 +15,19 @@ services:
     networks:
       - library-net
 
-  initDb:
-    image: orky161/library-init:8.5
-    environment:
-      - DB_HOST
-      - DB_PORT
-      - DB_USER
-      - DB_PASSWORD
-      - DB_NAME
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - library-net
+#  initDb:
+#    image: orky161/library-init:8.5.2
+#    environment:
+#      - DB_HOST
+#      - DB_PORT
+#      - DB_USER
+#      - DB_PASSWORD
+#      - DB_NAME
+#    depends_on:
+#      mysql:
+#        condition: service_healthy
+#    networks:
+#      - library-net
 
   mysql:
     container_name: mysql
@@ -49,128 +49,139 @@ services:
     networks:
       - library-net
 
-
-  auth:
-    image: orky161/library-auth:8.5
-    restart: always
-    environment:
-      - DB_HOST
-      - DB_PORT
-      - DB_USER
-      - DB_PASSWORD
-      - DB_NAME
-      - AUTH_SERVICE
-      - TOKEN_PRIVATE_KEY
-      - RABBIT_URL
-      - CREATE_CLIENT_QUEUE
-      - CREATE_EMPLOYEE_QUEUE
-      - CREATE_AUTHOR_QUEUE
+  connections:
+    image: "redis"
+    container_name: connections
+    command: redis-server
     ports:
-      - '30000:30000'
+      - "6379:6379"
+    volumes:
+      - connections-data:/var/lib/redis
     networks:
       - library-net
-
-
-  employee:
-    image: orky161/library-employees:8.5
-    restart: always
-    environment:
-      - DB_HOST
-      - DB_PORT
-      - DB_USER
-      - DB_PASSWORD
-      - DB_NAME
-      - AUTH_SERVICE
-      - NOTIFY_QUEUE
-      - RABBIT_URL
-      - CREATE_CLIENT_QUEUE
-      - CREATE_EMPLOYEE_QUEUE
-      - CREATE_AUTHOR_QUEUE
-      - TOKEN_PRIVATE_KEY
-    ports:
-      - '30004:30004'
-    extra_hosts:
-      - "auth:10.0.0.16"
-    networks:
-      - library-net
-
-
-  books:
-    image: orky161/library-books:8.5
-    restart: always
-    environment:
-      - DB_HOST
-      - DB_PORT
-      - DB_USER
-      - DB_PASSWORD
-      - DB_NAME
-      - ACCESS_KEY_ID
-      - SECRET_ACCESS_KEY
-      - BUCKET
-      - AUTH_SERVICE
-      - TOKEN_PRIVATE_KEY
-    ports:
-      - '30001:30001'
-    networks:
-      - library-net
-
-  authors:
-    image: orky161/library-authors:8.5
-    restart: always
-    environment:
-      - DB_HOST
-      - DB_PORT
-      - DB_USER
-      - DB_PASSWORD
-      - DB_NAME
-      - NOTIFY_QUEUE
-      - AUTH_SERVICE
-      - RABBIT_URL
-      - CREATE_CLIENT_QUEUE
-      - CREATE_EMPLOYEE_QUEUE
-      - CREATE_AUTHOR_QUEUE
-      - TOKEN_PRIVATE_KEY
-    ports:
-      - '30002:30002'
-    networks:
-      - library-net
-
-  clients:
-    image: orky161/library-clients:8.5
-    restart: always
-    environment:
-      - DB_HOST
-      - DB_PORT
-      - DB_USER
-      - DB_PASSWORD
-      - DB_NAME
-      - AUTH_SERVICE
-      - NOTIFY_QUEUE
-      - RABBIT_URL
-      - CREATE_CLIENT_QUEUE
-      - CREATE_EMPLOYEE_QUEUE
-      - CREATE_AUTHOR_QUEUE
-      - TOKEN_PRIVATE_KEY
-    ports:
-      - '30003:30003'
-    networks:
-      - library-net
-
-  notify:
-    image: orky161/library-authors:8.5
-    restart: always
-    environment:
-      - NOTIFY_QUEUE
-      - RABBIT_URL
-    ports:
-      - '30010:30010'
-    networks:
-      - library-net
+#  auth:
+#    image: orky161/library-auth:8.5
+#    restart: always
+#    environment:
+#      - DB_HOST
+#      - DB_PORT
+#      - DB_USER
+#      - DB_PASSWORD
+#      - DB_NAME
+#      - AUTH_SERVICE
+#      - TOKEN_PRIVATE_KEY
+#      - RABBIT_URL
+#      - CREATE_CLIENT_QUEUE
+#      - CREATE_EMPLOYEE_QUEUE
+#      - CREATE_AUTHOR_QUEUE
+#    ports:
+#      - '30000:30000'
+#    networks:
+#      - library-net
+#
+#
+#  employee:
+#    image: orky161/library-employees:8.5
+#    restart: always
+#    environment:
+#      - DB_HOST
+#      - DB_PORT
+#      - DB_USER
+#      - DB_PASSWORD
+#      - DB_NAME
+#      - AUTH_SERVICE
+#      - NOTIFY_QUEUE
+#      - RABBIT_URL
+#      - CREATE_CLIENT_QUEUE
+#      - CREATE_EMPLOYEE_QUEUE
+#      - CREATE_AUTHOR_QUEUE
+#      - TOKEN_PRIVATE_KEY
+#    ports:
+#      - '30004:30004'
+#    extra_hosts:
+#      - "auth:10.0.0.16"
+#    networks:
+#      - library-net
+#
+#
+#  books:
+#    image: orky161/library-books:8.5
+#    restart: always
+#    environment:
+#      - DB_HOST
+#      - DB_PORT
+#      - DB_USER
+#      - DB_PASSWORD
+#      - DB_NAME
+#      - ACCESS_KEY_ID
+#      - SECRET_ACCESS_KEY
+#      - BUCKET
+#      - AUTH_SERVICE
+#      - TOKEN_PRIVATE_KEY
+#    ports:
+#      - '30001:30001'
+#    networks:
+#      - library-net
+#
+#  authors:
+#    image: orky161/library-authors:8.5
+#    restart: always
+#    environment:
+#      - DB_HOST
+#      - DB_PORT
+#      - DB_USER
+#      - DB_PASSWORD
+#      - DB_NAME
+#      - NOTIFY_QUEUE
+#      - AUTH_SERVICE
+#      - RABBIT_URL
+#      - CREATE_CLIENT_QUEUE
+#      - CREATE_EMPLOYEE_QUEUE
+#      - CREATE_AUTHOR_QUEUE
+#      - TOKEN_PRIVATE_KEY
+#    ports:
+#      - '30002:30002'
+#    networks:
+#      - library-net
+#
+#  clients:
+#    image: orky161/library-clients:8.5
+#    restart: always
+#    environment:
+#      - DB_HOST
+#      - DB_PORT
+#      - DB_USER
+#      - DB_PASSWORD
+#      - DB_NAME
+#      - AUTH_SERVICE
+#      - NOTIFY_QUEUE
+#      - RABBIT_URL
+#      - CREATE_CLIENT_QUEUE
+#      - CREATE_EMPLOYEE_QUEUE
+#      - CREATE_AUTHOR_QUEUE
+#      - TOKEN_PRIVATE_KEY
+#    ports:
+#      - '30003:30003'
+#    networks:
+#      - library-net
+#
+#  notify:
+#    image: orky161/library-authors:8.5
+#    restart: always
+#    environment:
+#      - NOTIFY_QUEUE
+#      - RABBIT_URL
+#    ports:
+#      - '30010:30010'
+#    networks:
+#      - library-net
 
 volumes:
   mysql-db:
+  mysql2-db:
   rabbitmq_data:
- 
+  connections-data:
+
 networks:
   library-net:
     driver: bridge
