@@ -7,6 +7,8 @@
 * books - nodeJS
 * authors - nodeJS
 * auth - nodeJS
+* messenger - nodeJS
+* sessions - nodeJS
 * initialize - python
 
 ##### k8s base on:
@@ -14,12 +16,28 @@
 * helm charts 
 
 ##### aws diagram
-![AWS](./assets/k8s-diagram.png)
+![AWS](./assets/k8s-all.png)
+
+
+##### Services communication
+![AWS](./assets/services.png)
+
 
 ##### DB
 * mysql sitting on RDS
 
 ![Tabels](./assets/tables.png)
+
+
+
+### Chat
+
+* Messages, rooms => cassandra
+* Connections => redis
+ 
+##### Cassandra
+
+![Tabels](./assets/cassandra.png)
 
 
 ##### Locally
