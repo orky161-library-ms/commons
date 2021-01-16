@@ -26,7 +26,7 @@
 ##### DB
 * mysql sitting on RDS
 
-![Tabels](./assets/tables.png)
+![Tabels](./assets/mysql-tables.png)
 
 
 
